@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include <glfw3.h>
 #include <iostream>
 int main()
@@ -15,6 +16,7 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+	gladLoadGL();
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		while (!glfwWindowShouldClose(window))
 		{

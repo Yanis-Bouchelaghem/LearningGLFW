@@ -1,12 +1,12 @@
 # Learning GLFW without losing your sanity
 
-This is a self-contained, pre-configured Visual Studio project for using GLFW 3.3.8.
+This is a self-contained, pre-configured Visual Studio project for using GLFW 3.3.8 and GLAD.
 
-No GLFW installation, no external dependencies required. Everything is ready.
+No GLFW or GLAD installation and no external dependencies required. Everything is ready.
 
 This has been tested with Visual Studio 2019 (version 16.11.16) but should work for the other Visual Studio versions.
 
-## All windows configurations supported
+## All build configurations supported
 
 Supports x64 and x86 builds with both debug and release modes. (had to compile GLFW from scratch for this :') )
 

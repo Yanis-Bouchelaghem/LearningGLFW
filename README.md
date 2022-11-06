@@ -1,6 +1,6 @@
 # Learning GLFW without losing your sanity
 
-This is a self-contained, pre-configured Visual Studio project for using GLFW 3.3.8 and GLAD.
+This is a self-contained, pre-configured Visual Studio project for using GLFW 3.3.8, GLM 0.9.9.8 and GLAD.
 
 No GLFW or GLAD installation and no external dependencies required. Everything is ready.
 
@@ -16,7 +16,7 @@ Supports x64 and x86 builds with both debug and release modes. (had to compile G
 
 -If installing Visual Studio, pick the "Desktop development with C++" package.
 
--Clone the repo.
+-Clone (or download as zip) the repo.
 
 -Open the `.sln` file.
 

@@ -11,6 +11,9 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
     //Create a window and set its context to the current thread.
     GLFWwindow* window = glfwCreateWindow(800, 600, "You're the best", nullptr, nullptr);
@@ -45,13 +48,7 @@ int main()
      0.0f,  0.5f, 0.0f
     };
 
-    //Create a Vertex Buffer Object
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    //Copy the vertex data into the VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    ////////////////Load the shaders/////////////////////////
 
     //The vertex shader code
     const char* vertexShaderSource = "#version 330 core\n"
@@ -113,12 +110,36 @@ int main()
         std::cout << "ERROR::SHADER_PROGRAM::LINK_FAILED\n" << infoLog << std::endl;
     }
 
-    //Activate the shader program
-    glUseProgram(shaderProgram);
 
     //Delete the vertex & fragment shaders, we do not need the anymore
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    ///////////////Create VAOs and VBOs//////////////////////
+
+    //Create a VAO
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    //Create a Vertex Buffer Object
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    //Copy the vertex data into the VBO
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //Tell openGL how to read the VBO into the input of the vertex shader.
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(vertices[0]), 0);
+    glEnableVertexAttribArray(0);
+
+    //Unbind the VAO, it contains all of the info about how to read the VBO.
+    //Always unbind the VAO first. If we unbind the EBO first, it will also be unbound in the VAO.
+    glBindVertexArray(0);
+    //Unbind the VBO.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
     //The loop
     while (!glfwWindowShouldClose(window))
     {
@@ -126,12 +147,18 @@ int main()
 
         //Render here
         glClear(GL_COLOR_BUFFER_BIT);
-
+        //Activate the shader program
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shaderProgram);
     glfwTerminate();
     return 0;
 }

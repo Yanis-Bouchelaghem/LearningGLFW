@@ -43,9 +43,14 @@ int main()
 
     //The coordinates of our triangle in NDC
     float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left 
+    };
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
     };
 
     ////////////////Load the shaders/////////////////////////
@@ -133,13 +138,20 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(vertices[0]), 0);
     glEnableVertexAttribArray(0);
 
+    //Create the element buffer object.
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    //Bind the EBO and fill its data.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     //Unbind the VAO, it contains all of the info about how to read the VBO.
     //Always unbind the VAO first. If we unbind the EBO first, it will also be unbound in the VAO.
     glBindVertexArray(0);
     //Unbind the VBO.
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    
     //The loop
     while (!glfwWindowShouldClose(window))
     {
@@ -150,7 +162,8 @@ int main()
         //Activate the shader program
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -24,10 +24,21 @@
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.hpp">
+    <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\VertexShader.vert">
+      <Filter>Resource Files\Shader</Filter>
+    </None>
+    <None Include="..\Shaders\FragmentShader.frag">
+      <Filter>Resource Files\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

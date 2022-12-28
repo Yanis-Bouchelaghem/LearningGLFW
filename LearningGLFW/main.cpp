@@ -106,6 +106,7 @@ int main()
         float timeValue = glfwGetTime();
         float greenValue = sin(timeValue) / 2.0f + 0.5f;
         shaderProgram.SetVec4fUniform("vertexColor", 0.0f, greenValue, 0.0f, 1.0f);
+        shaderProgram.SetFloatUniform("horizontalOffset", -0.2f);
         //glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

@@ -4,12 +4,16 @@ class Shader
 {
 public:
 	Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
+	Shader(const Shader& other) = delete;
+	Shader& operator=(const Shader& other) = delete;
+	~Shader() noexcept;
 
 	void Use();
 	// utility uniform functions
-	void setBoolUniform(const std::string& name, bool value) const;
-	void setIntUniform(const std::string& name, int value) const;
-	void setFloatUniform(const std::string& name, float value) const;
+	void SetBoolUniform(const std::string& name, bool value) const;
+	void SetIntUniform(const std::string& name, int value) const;
+	void SetFloatUniform(const std::string& name, float value) const;
+	void SetVec4fUniform(const std::string& name, float x, float y, float z, float w) const;
 private:
 	unsigned int shaderProgramID;
 };

@@ -77,20 +77,30 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
     glDeleteShader(fragment);
 }
 
+Shader::~Shader() noexcept
+{
+    glDeleteProgram(shaderProgramID);
+}
+
 void Shader::Use()
 {
     glUseProgram(shaderProgramID);
 }
 
-void Shader::setBoolUniform(const std::string& name, bool value) const
+void Shader::SetBoolUniform(const std::string& name, bool value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgramID, name.c_str()), (int)value);
 }
-void Shader::setIntUniform(const std::string& name, int value) const
+void Shader::SetIntUniform(const std::string& name, int value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgramID, name.c_str()), value);
 }
-void Shader::setFloatUniform(const std::string& name, float value) const
+void Shader::SetFloatUniform(const std::string& name, float value) const
 {
     glUniform1f(glGetUniformLocation(shaderProgramID, name.c_str()), value);
+}
+
+void Shader::SetVec4fUniform(const std::string& name, float x, float y, float z, float w) const
+{
+    glUniform4f(glGetUniformLocation(shaderProgramID, name.c_str()), x, y, z, w);
 }

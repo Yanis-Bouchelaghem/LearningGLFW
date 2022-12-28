@@ -43,10 +43,10 @@ int main()
 
     //The coordinates of our triangle in NDC
     float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
+         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // top right
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
+        -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f  // top left 
     };
     unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,   // first triangle
@@ -58,9 +58,12 @@ int main()
     //The vertex shader code
     const char* vertexShaderSource = "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
+        "layout (location = 1) in vec3 aColor;\n"
+        "out vec3 vertexColor;"
         "void main()\n"
         "{\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "   gl_Position = vec4(aPos, 1.0);\n"
+        "   vertexColor = aColor;\n"
         "}";
     //Create a shader object to hold the vertex shader
     unsigned int vertexShader;
@@ -79,11 +82,11 @@ int main()
 
     //The fragment shader code
     const char* fragmentShaderSource = "#version 330 core\n"
-        "uniform vec4 vertexColor;"
+        "in vec3 vertexColor;"
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
-        "    FragColor = vertexColor;\n"
+        "    FragColor = vec4(vertexColor, 1.0);\n"
         "}";
     //Create a shader object to hold the fragment shader
     unsigned int fragmentShader;
@@ -136,9 +139,10 @@ int main()
     //Copy the vertex data into the VBO
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     //Tell openGL how to read the VBO into the input of the vertex shader.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(vertices[0]), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(vertices[0]), 0);
     glEnableVertexAttribArray(0);
-
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(vertices[0]), (void*)(3 * sizeof(vertices[0])));
+    glEnableVertexAttribArray(1);
     //Create the element buffer object.
     unsigned int EBO;
     glGenBuffers(1, &EBO);

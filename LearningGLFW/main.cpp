@@ -4,6 +4,10 @@
 #include "Shader.h"
 #include "stb_image.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -120,6 +124,12 @@ int main()
     stbi_image_free(data);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
+
+    //Prepare the tranformations
+    glm::mat4 transformation = glm::mat4{ 1.0f }; //Identity matrix
+    transformation = glm::rotate(transformation, glm::radians(90.0f), glm::vec3{ 0.0f, 0.0f, 1.0f });
+    transformation = glm::translate(transformation, glm::vec3{ 0.5f, 0.5f, 0.0f });
+
     //The loop
     while (!glfwWindowShouldClose(window))
     {
@@ -131,6 +141,9 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture); //Set the uniform for the texture sampler in the fragment shader
         //Activate the shader program
         shaderProgram.Use();
+        //Send uniforms to shader
+        unsigned int transformLocation = glGetUniformLocation(shaderProgram.GetID(), "transform");
+        glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transformation));
         glBindVertexArray(VAO);
 
         //glDrawArrays(GL_TRIANGLES, 0, 3);

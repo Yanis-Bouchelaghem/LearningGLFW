@@ -9,6 +9,7 @@ public:
 	~Shader() noexcept;
 
 	void Use();
+	unsigned int GetID() const;
 	// utility uniform functions
 	void SetBoolUniform(const std::string& name, bool value) const;
 	void SetIntUniform(const std::string& name, int value) const;

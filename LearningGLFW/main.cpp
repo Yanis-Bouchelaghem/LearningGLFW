@@ -2,6 +2,7 @@
 #include <glfw3.h>
 #include <iostream>
 #include "Shader.h"
+#include "stb_image.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -41,13 +42,13 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 
-
     //The coordinates of our triangle in NDC
     float vertices[] = {
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // top right
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
-        -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f  // top left 
+        //Positions             //RGB               //Texture coordinates
+         0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,   0.0f, 0.0f,// bottom left
+        -0.5f,  0.5f, 0.0f,     1.0f, 1.0f, 1.0f,   0.0f, 1.0f // top left 
     };
     unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,   // first triangle
@@ -73,10 +74,12 @@ int main()
     //Copy the vertex data into the VBO
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     //Tell openGL how to read the VBO into the input of the vertex shader.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(vertices[0]), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(vertices[0]), 0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(vertices[0]), (void*)(3 * sizeof(vertices[0])));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(vertices[0]), (void*)(3 * sizeof(vertices[0])));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(vertices[0]), (void*)(6 * sizeof(vertices[0])));
+    glEnableVertexAttribArray(2);
     //Create the element buffer object.
     unsigned int EBO;
     glGenBuffers(1, &EBO);
@@ -89,6 +92,31 @@ int main()
     //Unbind the VBO.
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+
+    //Create the OpenGL texture.
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //Load the texture
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("..\\Textures\\container.jpg", &width, &height, &nrChannels, 0);
+
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+
+    {
+        std::cout << "ERROR::TEXTURE::LOADING_FAILED\n";
+    }
+
+    stbi_image_free(data);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
     //The loop
@@ -98,15 +126,12 @@ int main()
 
         //Render here
         glClear(GL_COLOR_BUFFER_BIT);
+        //Bind texture
+        glBindTexture(GL_TEXTURE_2D, texture); //Set the uniform for the texture sampler in the fragment shader
         //Activate the shader program
         shaderProgram.Use();
         glBindVertexArray(VAO);
 
-        // update the uniform color
-        float timeValue = glfwGetTime();
-        float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        shaderProgram.SetVec4fUniform("vertexColor", 0.0f, greenValue, 0.0f, 1.0f);
-        shaderProgram.SetFloatUniform("horizontalOffset", -0.2f);
         //glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

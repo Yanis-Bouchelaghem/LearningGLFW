@@ -125,10 +125,7 @@ int main()
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
 
-    //Prepare the tranformations
-    glm::mat4 transformation = glm::mat4{ 1.0f }; //Identity matrix
-    transformation = glm::rotate(transformation, glm::radians(90.0f), glm::vec3{ 0.0f, 0.0f, 1.0f });
-    transformation = glm::translate(transformation, glm::vec3{ 0.5f, 0.5f, 0.0f });
+
 
     //The loop
     while (!glfwWindowShouldClose(window))
@@ -139,6 +136,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         //Bind texture
         glBindTexture(GL_TEXTURE_2D, texture); //Set the uniform for the texture sampler in the fragment shader
+        
+        //Create the transformation
+        glm::mat4 transformation = glm::mat4{ 1.0f }; //Identity matrix
+        transformation = glm::translate(transformation, glm::vec3{ 0.5f, 0.5f, 0.0f });
+        transformation = glm::rotate(transformation, (float)glfwGetTime() , glm::vec3{ 0.0f, 0.0f, 1.0f });
+
         //Activate the shader program
         shaderProgram.Use();
         //Send uniforms to shader
